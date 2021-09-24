@@ -18,7 +18,7 @@ export default class Handler {
 			readdirSync(`${__dirname}/../events`).forEach((fileName: string) => {
 				if (fileName.startsWith('--') || !fileName.includes('event')) return;
 
-				const event: eventInterface = require(`../events/${fileName}`);
+				const event: eventInterface = require(`../events/${fileName}`).default;
 				const eventName: string = fileName.split('.')[0];
 				bot.events.set(eventName, event);
 
@@ -32,7 +32,7 @@ export default class Handler {
 			await readdirSync(`${__dirname}/../commands`).forEach((fileName: string) => {
 				if (fileName.startsWith('--') || !fileName.includes('command')) return;
 
-				const command: commandInterface = require(`../commands/${fileName}`);
+				const command: commandInterface = require(`../commands/${fileName}`).default;
 				if (!command.name || !command.description || !command.run) {
 					if (process.env.NODE_ENV === 'development') return console.error(`File: ${fileName} doesn't have a name or description or run option!`);
 					else return;

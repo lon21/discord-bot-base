@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
+  "scripts": {
+	  "dev": "nodemon ."
+  },
   "keywords": [],
   "author": "lon21",
   "license": "UNLICENSED",

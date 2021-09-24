@@ -1,7 +1,7 @@
 import { CommandInteraction } from "discord.js";
 import bot from '../Structures/bot';
 
-export = {
+export default {
 	name: 'ping',
 	description: 'Pokazuje ping bota z ws',
 	run: async (interaction: CommandInteraction) => {

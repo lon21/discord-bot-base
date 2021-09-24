@@ -3,7 +3,7 @@ import bot from '../Structures/bot';
 import Handler from '../Structures/handler';
 const handler = new Handler();
 
-export = {
+export default {
 	block: false,
 	run: async () => {
 		await handler.loadSlashCommands(bot.user.id, bot.guilds.cache);

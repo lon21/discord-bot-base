@@ -2,7 +2,7 @@ import { CommandInteraction } from 'discord.js';
 import { command as commandInterface } from '../Types/handlingTypes';
 import bot from '../Structures/bot';
 
-export = {
+export default {
 	run: async (interaction: CommandInteraction) => {
 
 		if (!interaction.isCommand()) return;
