@@ -4,11 +4,14 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-	  "dev": "nodemon ."
+	"build": "tsc",
+    "dev": "nodemon .",
+	"start": "node ."
   },
   "keywords": [],
   "author": "lon21",
   "license": "UNLICENSED",
+  "github": "https://github.com/lon21/discord-bot-base",
   "dependencies": {
     "@discordjs/rest": "^0.1.0-canary.0",
     "discord-api-types": "^0.23.1",
@@ -19,6 +22,8 @@
     "rss-parser": "^3.12.0"
   },
   "devDependencies": {
-    "@types/node": "^16.9.6"
+    "@types/node": "^16.9.6",
+    "nodemon": "^2.0.13",
+    "typescript": "^4.4.3"
   }
 }

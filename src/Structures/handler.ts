@@ -1,7 +1,7 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import { readdirSync } from 'fs';
-import { event as eventInterface, command as commandInterface } from '../Types/handlingTypes';
+import { Event as eventInterface, Command as commandInterface } from '../Types/handlingTypes';
 import bot from './bot';
 
 const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);

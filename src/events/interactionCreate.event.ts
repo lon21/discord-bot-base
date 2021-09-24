@@ -1,13 +1,13 @@
 import { CommandInteraction } from 'discord.js';
-import { command as commandInterface } from '../Types/handlingTypes';
+import { BotCommand, BotEvent } from '../Types/handlingTypes';
 import bot from '../Structures/bot';
 
-export default {
+export default <BotEvent> {
 	run: async (interaction: CommandInteraction) => {
 
 		if (!interaction.isCommand()) return;
 
-		const command: any = bot.commands.get(interaction.commandName);
+		const command: BotCommand = bot.commands.get(interaction.commandName);
 		if (!command || typeof command === undefined) return;
 
 		try {

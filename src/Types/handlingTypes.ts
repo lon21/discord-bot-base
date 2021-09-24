@@ -1,16 +1,13 @@
+// @file: handlingTypes.ts
 import { CommandInteraction } from 'discord.js';
 
-interface commandInput {
-	interaction: CommandInteraction;
-}
-
-export interface command {
+export interface BotCommand {
 	name: string;
 	description: string;
-	run: (commandInput) => Promise<void>	
+	run: (interaction: CommandInteraction) => Promise<void>	
 }
 
-export interface event {
+export interface BotEvent {
 	block: boolean;
 	run: ({ }) => Promise<void>;
 }
