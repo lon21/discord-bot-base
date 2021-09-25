@@ -1,6 +1,6 @@
 import { CommandInteraction } from "discord.js";
-import bot from '../Structures/bot';
-import { BotCommand } from '../Types/handlingTypes';
+import bot from '../bot';
+import { BotCommand } from '../types';
 
 export default <BotCommand> {
 	name: 'ping',

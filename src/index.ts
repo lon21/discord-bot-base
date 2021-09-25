@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 config();
-import bot from './Structures/bot';
-import Handler from './Structures/handler';
+import bot from './bot';
+import Handler from './handler';
 
 const handler = new Handler();
 

@@ -1,7 +1,8 @@
 import { REST } from '@discordjs/rest';
-import { Routes } from 'discord-api-types/v9';
+import { GuildFeature, Routes } from 'discord-api-types/v9';
 import { readdirSync } from 'fs';
-import { Event as eventInterface, Command as commandInterface } from '../Types/handlingTypes';
+import { BotEvent as eventInterface, BotCommand as commandInterface } from './types';
+import { join } from 'path';
 import bot from './bot';
 
 const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
@@ -15,10 +16,9 @@ export default class Handler {
 	constructor(handlerOptions?) {
 
 		this.loadEvents = () => {
-			readdirSync(`${__dirname}/../events`).forEach((fileName: string) => {
+			readdirSync(join(__dirname, 'events')).forEach((fileName: string) => {
 				if (fileName.startsWith('--') || !fileName.includes('event')) return;
-
-				const event: eventInterface = require(`../events/${fileName}`).default;
+				const event: eventInterface = require(`./events/${fileName}`).default;
 				const eventName: string = fileName.split('.')[0];
 				bot.events.set(eventName, event);
 
@@ -29,10 +29,10 @@ export default class Handler {
 		};
 
 		this.loadCommands = async () => {
-			await readdirSync(`${__dirname}/../commands`).forEach((fileName: string) => {
+			await readdirSync(join(__dirname, 'commands')).forEach((fileName: string) => {
 				if (fileName.startsWith('--') || !fileName.includes('command')) return;
 
-				const command: commandInterface = require(`../commands/${fileName}`).default;
+				const command: commandInterface = require(`./commands/${fileName}`).default;
 				if (!command.name || !command.description || !command.run) {
 					if (process.env.NODE_ENV === 'development') return console.error(`File: ${fileName} doesn't have a name or description or run option!`);
 					else return;
@@ -44,6 +44,8 @@ export default class Handler {
 
 		this.loadSlashCommands = async (id, guilds) => {
 
+			console.log('Started loading (/) commands');
+
 			let commands = [];
 			await bot.commands.forEach((command: commandInterface) => {
 				const toAdd = {
@@ -53,29 +55,25 @@ export default class Handler {
 				commands.push(toAdd);
 			});
 
-			await (async () => {
-					console.log('Started loading (/) commands');
-					let gLength = 0;
+			let guildsSize = 0;
+			guilds.forEach(g => {
+				try {
+					rest.put(
+						Routes.applicationGuildCommands(id, g.id),
+						{ body: commands },
+					);
+				} catch (error) {
+					console.error(error);
+				}
+				console.log(`Loaded for ${g.name}`);
 
-					await guilds.forEach(async g => {
-						try {
-							await rest.put(
-								Routes.applicationGuildCommands(id, g.id),
-								{ body: commands },
-							);
-						} catch (error) {
-							console.error(error);
-						}
-						
-						console.log(`Loaded for ${g.name}`);
-						gLength++;
-						
-						if (gLength === guilds.size) {
-							console.log('Finished loading (/) commands');
-							return bot.emit('readyToUse');
-						}
-					});
-			})();
+
+				guildsSize++;
+				if (guildsSize === guilds.size) {
+					console.log('Finished loading (/) commands');
+					return bot.emit('readyToUse');
+				}
+			});
 		};
 	}
 }
