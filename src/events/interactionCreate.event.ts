@@ -9,9 +9,18 @@ export default <BotEvent> {
 
 		const command = <BotCommand> bot.commands.get(interaction.commandName);
 		if (!command || typeof command === undefined) return;
+	
+		const args = [];
+
+		interaction.options.data.forEach(option => {
+			args.push({
+				name: option.name,
+				value: option.value,
+			});
+		});
 
 		try {
-		command.run(interaction);
+		command.run(interaction, args);
 		} catch (err) {
 			console.error(err);
 		}

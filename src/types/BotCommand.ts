@@ -3,5 +3,6 @@ import { CommandInteraction } from 'discord.js';
 export interface BotCommand {
 	name: string;
 	description: string;
-	run: (interaction: CommandInteraction) => Promise<void>	
+	options?: object,
+	run: (interaction: CommandInteraction, args: any[]) => Promise<void>	
 }

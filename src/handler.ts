@@ -1,5 +1,5 @@
 import { REST } from '@discordjs/rest';
-import { GuildFeature, Routes } from 'discord-api-types/v9';
+import { Routes } from 'discord-api-types/v9';
 import { readdirSync } from 'fs';
 import { BotEvent as eventInterface, BotCommand as commandInterface } from './types';
 import { join } from 'path';
@@ -52,6 +52,9 @@ export default class Handler {
 					name: command.name,
 					description: command.description,
 				};
+				if (command?.options) {
+					toAdd['options'] = command.options;
+				}
 				commands.push(toAdd);
 			});
 
