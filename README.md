@@ -4,7 +4,7 @@ This is a simple bot base with simple options
 
 ### How to use:
  - Create `.env` file with value ```BOT_TOKEN=yourbottoken```
- - Type `yarn` in your console
+ - Type `yarn install` in your console
  - Type `yarn build` in your console
  - To start bot type `yarn start` in your console
 
