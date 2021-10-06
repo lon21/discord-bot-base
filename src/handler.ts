@@ -53,7 +53,9 @@ export default class Handler {
 					description: command.description,
 				};
 				if (command?.options) {
-					toAdd['options'] = command.options;
+					if (!Array.isArray(command.options)) {
+						toAdd['options'] = [command.options];
+					} else toAdd['options'] = command.options;
 				}
 				commands.push(toAdd);
 			});
