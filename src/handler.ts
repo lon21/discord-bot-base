@@ -60,25 +60,17 @@ export default class Handler {
 				commands.push(toAdd);
 			});
 
-			let guildsSize = 0;
-			guilds.forEach(g => {
-				try {
-					rest.put(
-						Routes.applicationGuildCommands(id, g.id),
-						{ body: commands },
-					);
-				} catch (error) {
-					console.error(error);
-				}
-				console.log(`Loaded for ${g.name}`);
-
-
-				guildsSize++;
-				if (guildsSize === guilds.size) {
-					console.log('Finished loading (/) commands');
-					return bot.emit('readyToUse');
-				}
-			});
-		};
-	}
+			try {
+				rest.put(
+					Routes.applicationCommands(id),
+					{ body: commands },
+				);
+			} catch (error) {
+				console.error(error);
+			}
+			console.log('Finished loading (/) commands');
+			return bot.emit('readyToUse');
+			
+		}
+	};
 }
