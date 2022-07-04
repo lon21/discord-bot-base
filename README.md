@@ -1,4 +1,9 @@
-# Discord Bot Base 
+# ```! THIS REPOSITORY WONT BE UPDATED ! ```
+# Check [new one](https://github.com/lon21/updated-discord-bot-base)
+
+
+
+## Discord Bot Base 
 
 This is a simple bot base with simple options
 
