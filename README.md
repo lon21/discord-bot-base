@@ -1,5 +1,5 @@
 # ```! THIS REPOSITORY WONT BE UPDATED ! ```
-# Check [new one](https://github.com/lon21/updated-discord-bot-base)
+# I don't even know if it's working
 
 
 
