@@ -156,7 +156,8 @@ export const loadCommands = async () => {
 	const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 	try {
-		if (process.env.GLOBAL_COMMANDS.toLowerCase() !== 'true') {
+		const globalCommands = (process.env.GLOBAL_COMMANDS ?? 'false').toLowerCase() === 'true';
+		if (!globalCommands) {
 			if (!process.env.COMMAND_GUILD_ID) {
 				Logger.error('COMMAND_GUILD_ID is not set in .env but GLOBAL_COMMANDS is false. Cannot register guild-specific commands.');
 				process.exit(1);

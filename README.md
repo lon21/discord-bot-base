@@ -20,7 +20,7 @@ A TypeScript-based Discord bot template using discord.js with a decorator-based 
 ## Installation
 
 ```sh
-git clone https://github.com/YOUR_USERNAME/discord-bot-base.git
+git clone https://github.com/lon21/discord-bot-base.git
 cd discord-bot-base
 pnpm install
 ```
@@ -182,4 +182,4 @@ src/
 
 ## License
 
-ISC
+MIT License. See `LICENSE` file for details.

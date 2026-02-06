@@ -11,10 +11,10 @@ import bot from '../bot';
 export class PingCommand extends BaseSlashCommand {
 	async run(interaction: ChatInputCommandInteraction) {
 		
-		await interaction.reply('Zbieram informacje...');
+		await interaction.reply('Getting info...');
 		
 		const msg = await interaction.fetchReply();
 		
-		await interaction.editReply(`Pong!\n> **Api roadtrip ping:** \`${msg.createdTimestamp - interaction.createdTimestamp}ms\`\n> **Ping bota z ws:** \`${bot.ws.ping}ms\``);
+		await interaction.editReply(`Pong!\n> **API roundtrip ping:** \`${msg.createdTimestamp - interaction.createdTimestamp}ms\`\n> **Bot's WebSocket ping:** \`${bot.ws.ping}ms\``);
 	}
 }

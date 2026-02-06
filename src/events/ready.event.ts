@@ -9,7 +9,7 @@ import bot from '../bot';
 	once: true
 })
 export class ReadyEvent extends BaseEvent {
-	run = async (client: Client) => {
+	async run(client: Client) {
 		Logger.success(`Logged in as ${client.user?.tag}!`);
 		// @ts-ignore
 		global.bot = bot;

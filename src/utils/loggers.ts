@@ -19,7 +19,7 @@ export class Logger {
 	}
 
 	static debug(...args: any[]) {
-		if (process.env.NODE_ENV.toLowerCase() !== 'development') return;
+		if ((process.env.NODE_ENV ?? '').toLowerCase() !== 'development') return;
 		this.baseLog(yellow, 'DEBUG', args);
 	}
 }
