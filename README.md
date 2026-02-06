@@ -2,7 +2,7 @@
 
 A TypeScript-based Discord bot template using discord.js with a decorator-based architecture for commands and events.
 
-![Wakatime](itwillchange)
+[![wakatime](https://wakatime.com/badge/github/lon21/discord-bot-base.svg)](https://wakatime.com/badge/github/lon21/discord-bot-base)
 
 ## Features
 
@@ -42,6 +42,7 @@ cp env.example .env
 | `GLOBAL_COMMANDS` | Set to `TRUE` for global command registration (takes up to 1 hour to propagate) or `FALSE` for guild-specific commands (instant) |
 | `COMMAND_GUILD_ID` | Required when `GLOBAL_COMMANDS=FALSE`. The Discord server ID where commands will be registered |
 | `NODE_ENV` | Set to `development` for debug logging |
+| `OWNERS` | JSON array of Discord user IDs who can use owner-only commands. Example: `'["123456789012345678"]'` |
 
 ## Usage
 
