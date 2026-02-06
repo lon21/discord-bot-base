@@ -1,0 +1,35 @@
+{
+	"name": "discord-bot-base",
+	"version": "1.0.0",
+	"description": "",
+	"main": "build/index.js",
+	"engines": {
+		"node": ">=24.11.0",
+		"pnpm": ">= 10.22.0"
+	},
+	"scripts": {
+		"dev": "nodemon .",
+		"build": "tsc",
+		"start": "node build/index.js"
+	},
+	"keywords": [],
+	"author": {
+		"email": "lon21@lon21.pl",
+		"name": "lon21",
+		"url": "https://lon21.pl"
+	},
+	"license": "ISC",
+	"packageManager": "pnpm@10.28.2",
+	"dependencies": {
+		"discord.js": "^14.25.1",
+		"dotenv": "^17.2.3",
+		"picocolors": "^1.1.1",
+		"reflect-metadata": "^0.2.2"
+	},
+	"devDependencies": {
+		"@types/node": "^25.1.0",
+		"nodemon": "^3.1.11",
+		"tsx": "^4.21.0",
+		"typescript": "^5.9.3"
+	}
+}
