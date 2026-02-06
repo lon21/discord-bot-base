@@ -1,3 +1,6 @@
+# IMPORtANT
+`This repository is still in progress, things will change. I can't promise that everything will work`
+
 # Discord Bot Template
 
 A TypeScript-based Discord bot template using discord.js with a decorator-based architecture for commands and events.
