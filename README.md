@@ -1,4 +1,4 @@
-# IMPORtANT
+# IMPORTANT
 `This repository is still in progress, things will change. I can't promise that everything will work`
 
 # Discord Bot Template
