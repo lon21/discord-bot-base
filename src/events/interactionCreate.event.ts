@@ -56,5 +56,26 @@ export class InteractionCreateEvent extends BaseEvent {
 				}
 			}
 		}
+
+		if (interaction.isButton()) {
+			const button = bot.buttons.get(interaction.customId);
+			if (!button) {
+				Logger.debug(`Button not found: ${interaction.customId}`);
+				await interaction.reply({ content: '❌ Button not found.', flags: MessageFlags.Ephemeral });
+				return;
+			}
+
+			try {
+				await button.run(interaction);
+			} catch (error) {
+				Logger.error(`Error executing button ${interaction.customId}:`, error);
+				
+				if (interaction.replied || interaction.deferred) {
+					await interaction.followUp({ content: '❌ An error occurred while executing this button.', flags: MessageFlags.Ephemeral }).catch(() => {});
+				} else {
+					await interaction.reply({ content: '❌ An error occurred while executing this button.', flags: MessageFlags.Ephemeral }).catch(() => {});
+				}
+			}
+		}
 	}
 }

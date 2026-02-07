@@ -170,16 +170,79 @@ All events from discord.js `ClientEvents` are supported. Common examples:
 - `guildMemberAdd`
 - `guildMemberRemove`
 
+## Creating Buttons
+
+Create a new file in `src/buttons/` with the `.button.ts` suffix.
+
+```typescript
+// filepath: src/buttons/confirm.button.ts
+import { ButtonInteraction, ButtonStyle } from 'discord.js';
+import { BaseButton } from '../interfaces';
+import { RegisterButton } from '../decorators';
+
+@RegisterButton({
+    id: 'confirm',
+    label: 'Confirm',
+    style: ButtonStyle.Primary,
+    emoji: '✅',              // Optional: button emoji
+    disabled: false,          // Optional: disable the button
+})
+export class ConfirmButton extends BaseButton {
+    async run(interaction: ButtonInteraction) {
+        await interaction.reply('Action confirmed!');
+    }
+}
+```
+
+### Button Options
+
+| Option | Type | Required | Description |
+|--------|------|----------|-------------|
+| `id` | string | Yes | Unique identifier for the button (used as customId) |
+| `label` | string | Yes | Text displayed on the button |
+| `style` | ButtonStyle | Yes | Button style (Primary, Secondary, Success, Danger) |
+| `emoji` | string \| APIMessageComponentEmoji | No | Emoji to display on the button |
+| `disabled` | boolean | No | Whether the button is disabled |
+
+> **Note:** Link buttons (buttons with URLs) are not supported through this registration system. Discord handles link buttons separately, they don't trigger interactions and therefore don't need a handler. If you need a link button, create it manually using `ButtonBuilder` with `ButtonStyle.Link` and `.setURL()`.
+
+### Using Buttons in Commands
+
+```typescript
+import { ActionRowBuilder, ButtonBuilder, CommandInteraction } from 'discord.js';
+import { RegisterCommand } from '../decorators';
+import { BaseSlashCommand } from '../interfaces';
+import bot from '../bot';
+
+@RegisterCommand({
+    name: 'example',
+    description: 'A command with a button',
+})
+export class ExampleCommand extends BaseSlashCommand {
+    async run(interaction: CommandInteraction) {
+        const button = bot.buttons.get('confirm');
+        if (!button) {
+            await interaction.reply({ content: 'Button not found!', ephemeral: true });
+            return;
+        }
+
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button.discordData);
+        await interaction.reply({ content: 'Click the button:', components: [row] });
+    }
+}
+```
+
 ## Project Structure
 
 ```
 src/
 ├── bot.ts              # Bot client initialization
 ├── index.ts            # Entry point
+├── buttons/            # Button handlers
 ├── commands/           # Slash commands
 ├── events/             # Event handlers
-├── decorators/         # Command and event decorators
-├── handlers/           # Loaders for commands and events
+├── decorators/         # Command, event, and button decorators
+├── handlers/           # Loaders for commands, events, and buttons
 ├── interfaces/         # TypeScript interfaces and base classes
 └── utils/              # Utility functions
 ```
