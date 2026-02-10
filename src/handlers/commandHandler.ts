@@ -1,5 +1,6 @@
 import { readdirSync } from 'fs'
 import path from 'path'
+import { pathToFileURL } from 'url'
 import { getCommandMetadata } from '../decorators';
 import bot from '../bot';
 import { Logger } from '../utils/loggers';
@@ -91,7 +92,8 @@ export const loadCommands = async () => {
 
 	for (const file of files) {
 		try {
-			const fileImport = await import(path.join(commandsPath, file));
+			const filePath = path.join(commandsPath, file);
+			const fileImport = await import(pathToFileURL(filePath).href);
 			
 			for (const exportedClass of Object.values(fileImport)) {
 				if (typeof exportedClass !== 'function') continue;

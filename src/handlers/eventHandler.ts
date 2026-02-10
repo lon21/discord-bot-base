@@ -1,5 +1,6 @@
 import { readdirSync } from 'fs'
 import path from 'path'
+import { pathToFileURL } from 'url'
 import { getEventMetadata } from '../decorators';
 import bot from '../bot';
 import { Logger } from '../utils/loggers';
@@ -8,7 +9,8 @@ import { BaseEvent } from '../interfaces';
 export const loadEvents = async () => {
 	const files = readdirSync(path.join(__dirname, '..', 'events')).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
 	for (const file of files) {
-		const fileImport = await import(path.join(__dirname, '..', 'events', file));
+		const filePath = path.join(__dirname, '..', 'events', file);
+		const fileImport = await import(pathToFileURL(filePath).href);
 		
 		for (const exportedClass of Object.values(fileImport)) {
 			if (typeof exportedClass !== 'function') continue;

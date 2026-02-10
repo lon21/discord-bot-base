@@ -1,5 +1,6 @@
 import { readdirSync } from 'fs'
 import path from 'path'
+import { pathToFileURL } from 'url'
 import { getButtonMetadata } from '../decorators';
 import bot from '../bot';
 import { Logger } from '../utils/loggers';
@@ -9,7 +10,8 @@ import { ButtonBuilder } from 'discord.js';
 export const loadButtons = async () => {
 	const files = readdirSync(path.join(__dirname, '..', 'buttons')).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
 	for (const file of files) {
-		const fileImport = await import(path.join(__dirname, '..', 'buttons', file));
+		const filePath = path.join(__dirname, '..', 'buttons', file);
+		const fileImport = await import(pathToFileURL(filePath).href);
 		
 		for (const exportedClass of Object.values(fileImport)) {
 			if (typeof exportedClass !== 'function') continue;
