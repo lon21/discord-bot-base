@@ -1,15 +1,11 @@
-FROM node:24-alpine
-
-RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
+FROM oven/bun:alpine
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json bun.lock ./
 
-RUN pnpm install --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm build
-
-CMD ["pnpm", "start"]
+CMD ["bun", "src/index.ts"]

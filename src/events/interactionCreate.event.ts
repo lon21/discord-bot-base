@@ -6,7 +6,7 @@ import { Logger } from '../utils/loggers';
 
 const getOwners = (): string[] => {
 	try {
-		return JSON.parse(process.env.OWNERS || '[]');
+		return JSON.parse(Bun.env.OWNERS || '[]');
 	} catch {
 		Logger.error('Failed to parse OWNERS env variable');
 		return [];
@@ -21,7 +21,7 @@ export class InteractionCreateEvent extends BaseEvent {
 		if (interaction.isChatInputCommand()) {
 			const receivedAt = Date.now();
 			Logger.debug(`Received command: ${interaction.commandName} at ${receivedAt}`);
-			
+
 			const command = bot.commands.get(interaction.commandName);
 
 			if (!command) {
@@ -40,19 +40,19 @@ export class InteractionCreateEvent extends BaseEvent {
 				}
 			}
 
-			
+
 			Logger.debug(`Found command handler, executing... (${Date.now() - receivedAt}ms since received)`);
-			
+
 			try {
 				await command.run(interaction);
 				Logger.debug(`Command ${interaction.commandName} completed in ${Date.now() - receivedAt}ms`);
 			} catch (error) {
 				Logger.error(`Error executing command ${interaction.commandName}:`, error);
-				
+
 				if (interaction.replied || interaction.deferred) {
-					await interaction.followUp({ content: '❌ An error occurred while executing this command.', flags: MessageFlags.Ephemeral }).catch(() => {});
+					await interaction.followUp({ content: '❌ An error occurred while executing this command.', flags: MessageFlags.Ephemeral }).catch(() => { });
 				} else {
-					await interaction.reply({ content: '❌ An error occurred while executing this command.', flags: MessageFlags.Ephemeral }).catch(() => {});
+					await interaction.reply({ content: '❌ An error occurred while executing this command.', flags: MessageFlags.Ephemeral }).catch(() => { });
 				}
 			}
 		}
@@ -69,11 +69,11 @@ export class InteractionCreateEvent extends BaseEvent {
 				await button.run(interaction);
 			} catch (error) {
 				Logger.error(`Error executing button ${interaction.customId}:`, error);
-				
+
 				if (interaction.replied || interaction.deferred) {
-					await interaction.followUp({ content: '❌ An error occurred while executing this button.', flags: MessageFlags.Ephemeral }).catch(() => {});
+					await interaction.followUp({ content: '❌ An error occurred while executing this button.', flags: MessageFlags.Ephemeral }).catch(() => { });
 				} else {
-					await interaction.reply({ content: '❌ An error occurred while executing this button.', flags: MessageFlags.Ephemeral }).catch(() => {});
+					await interaction.reply({ content: '❌ An error occurred while executing this button.', flags: MessageFlags.Ephemeral }).catch(() => { });
 				}
 			}
 		}

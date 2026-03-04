@@ -159,7 +159,7 @@ export const loadCommands = async () => {
 		const response = await fetch(url, {
 			method,
 			headers: {
-				'Authorization': `Bot ${process.env.BOT_TOKEN}`,
+				'Authorization': `Bot ${Bun.env.BOT_TOKEN}`,
 				'Content-Type': 'application/json',
 			},
 			body: body ? JSON.stringify(body) : undefined,
@@ -184,24 +184,24 @@ export const loadCommands = async () => {
 
 	try {
 		Logger.debug(`Commands to register: ${JSON.stringify(bot.slashCommandsData.map(c => c.name))}`);
-		Logger.debug(`BOT_APP_ID: ${process.env.BOT_APP_ID}`);
-		Logger.debug(`COMMAND_GUILD_ID: ${process.env.COMMAND_GUILD_ID}`);
+		Logger.debug(`BOT_APP_ID: ${Bun.env.BOT_APP_ID}`);
+		Logger.debug(`COMMAND_GUILD_ID: ${Bun.env.COMMAND_GUILD_ID}`);
 
-		const globalCommands = (process.env.GLOBAL_COMMANDS ?? 'false').toLowerCase() === 'true';
+		const globalCommands = (Bun.env.GLOBAL_COMMANDS ?? 'false').toLowerCase() === 'true';
 		if (!globalCommands) {
-			if (!process.env.COMMAND_GUILD_ID) {
+			if (!Bun.env.COMMAND_GUILD_ID) {
 				Logger.error('COMMAND_GUILD_ID is not set in .env but GLOBAL_COMMANDS is false. Cannot register guild-specific commands.');
 				process.exit(1);
 			}
 
-			const route = `/applications/${process.env.BOT_APP_ID}/guilds/${process.env.COMMAND_GUILD_ID}/commands`;
+			const route = `/applications/${Bun.env.BOT_APP_ID}/guilds/${Bun.env.COMMAND_GUILD_ID}/commands`;
 
 			Logger.debug('Registering guild commands...');
 			const result = await discordApiRequest(route, 'PUT', bot.slashCommandsData);
 			Logger.debug(`Registration result: Registered ${Array.isArray(result) ? result.length : 0} commands`);
-			Logger.success(`Registered commands to guild ID ${process.env.COMMAND_GUILD_ID}`);
+			Logger.success(`Registered commands to guild ID ${Bun.env.COMMAND_GUILD_ID}`);
 		} else {
-			const route = `/applications/${process.env.BOT_APP_ID}/commands`;
+			const route = `/applications/${Bun.env.BOT_APP_ID}/commands`;
 
 			Logger.debug('Registering global commands...');
 			await discordApiRequest(route, 'PUT', bot.slashCommandsData);

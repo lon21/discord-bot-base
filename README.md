@@ -9,23 +9,22 @@ A TypeScript-based Discord bot template using discord.js with a decorator-based 
 
 ## Features
 
-- TypeScript with ESNext target
+- TypeScript with ESNext target (runs natively on Bun — no build step)
 - Decorator-based command and event registration
 - Support for slash commands with options and subcommands
 - Docker support for deployment
-- Hot reload during development with nodemon
+- Hot reload during development with `bun --watch`
 
 ## Requirements
 
-- Node.js >= 24.11.0
-- pnpm >= 10.28.2
+- [Bun](https://bun.sh/) >= 1.0
 
 ## Installation
 
 ```sh
 git clone https://github.com/lon21/discord-bot-base.git
 cd discord-bot-base
-pnpm install
+bun install
 ```
 
 ## Configuration
@@ -35,6 +34,8 @@ Copy the example environment file and fill in your values:
 ```sh
 cp env.example .env
 ```
+
+> **Note:** Bun automatically loads `.env` files — no extra configuration needed.
 
 ### Environment Variables
 
@@ -52,14 +53,15 @@ cp env.example .env
 ### Development
 
 ```sh
-pnpm dev
+bun dev
 ```
+
+This starts the bot with `--watch` mode — it will automatically restart on file changes.
 
 ### Production
 
 ```sh
-pnpm build
-pnpm start
+bun start
 ```
 
 ### Docker Deployment

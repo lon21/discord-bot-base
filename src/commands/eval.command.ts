@@ -1,4 +1,5 @@
 import { ChatInputCommandInteraction, MessageFlags } from 'discord.js';
+import { inspect } from 'util';
 import { RegisterCommand } from '../decorators';
 import { BaseSlashCommand } from '../interfaces';
 
@@ -25,10 +26,10 @@ export class EvalCommand extends BaseSlashCommand {
 				evaled = await evaled;
 			}
 
-			const inspected = typeof evaled === 'string' ? evaled : require('util').inspect(evaled, { depth: 0 });
+			const inspected = typeof evaled === 'string' ? evaled : inspect(evaled, { depth: 0 });
 			const truncated = inspected.length > 1900 ? inspected.slice(0, 1900) + '... (truncated)' : inspected;
-			
-			await interaction.editReply({ content: `\`\`\`js\n${truncated}\n\`\`\``});
+
+			await interaction.editReply({ content: `\`\`\`js\n${truncated}\n\`\`\`` });
 		} catch (error) {
 			await interaction.editReply({ content: `❌ Error during evaluation:\n\`\`\`js\n${error instanceof Error ? error.stack || error.message : String(error)}\n\`\`\`` });
 		}
