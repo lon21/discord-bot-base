@@ -5,18 +5,16 @@ import { getCommandMetadata } from '../decorators';
 import bot from '../bot';
 import { Logger } from '../utils/loggers';
 import { BaseSlashCommand, CommandOption } from '../interfaces';
-import { 
-	InteractionContextType, 
-	PermissionFlagsBits, 
-	REST, 
-	Routes, 
+import {
+	InteractionContextType,
+	PermissionFlagsBits,
 	SlashCommandBuilder,
 	SlashCommandSubcommandBuilder,
 } from 'discord.js';
 
 export const loadCommands = async () => {
 	const commandsPath = path.join(__dirname, '..', 'commands');
-	const files = readdirSync(commandsPath).filter(file => 
+	const files = readdirSync(commandsPath).filter(file =>
 		file.endsWith('.command.ts') || file.endsWith('.command.js')
 	);
 
@@ -94,12 +92,12 @@ export const loadCommands = async () => {
 		try {
 			const filePath = path.join(commandsPath, file);
 			const fileImport = await import(pathToFileURL(filePath).href);
-			
+
 			for (const exportedClass of Object.values(fileImport)) {
 				if (typeof exportedClass !== 'function') continue;
 
 				const meta = getCommandMetadata(exportedClass);
-				
+
 				if (!meta) continue;
 
 				if (!meta.name || !meta.description) {
@@ -154,10 +152,41 @@ export const loadCommands = async () => {
 	Logger.success(`Loaded a total of ${bot.commands.size} commands.`);
 	Logger.info('Registering slash commands with Discord...');
 
-	const rest = new REST().setToken(process.env.BOT_TOKEN);
 	const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+	const discordApiRequest = async (route: string, method: string, body?: any): Promise<any> => {
+		const url = `https://discord.com/api/v10${route}`;
+		const response = await fetch(url, {
+			method,
+			headers: {
+				'Authorization': `Bot ${process.env.BOT_TOKEN}`,
+				'Content-Type': 'application/json',
+			},
+			body: body ? JSON.stringify(body) : undefined,
+		});
+
+		if (response.status === 429) {
+			const rateLimitData = await response.json() as { retry_after?: number };
+			const retryAfter = Math.ceil((rateLimitData.retry_after || 5) + 10); // Add 10 seconds buffer
+			const retryTime = new Date(Date.now() + retryAfter * 1000).toLocaleTimeString();
+			Logger.warn(`Rate limited. Waiting ${retryAfter} seconds (will retry at ${retryTime})...`);
+			await delay(retryAfter * 1000);
+			return discordApiRequest(route, method, body);
+		}
+
+		if (!response.ok) {
+			const error = await response.json();
+			throw new Error(`Discord API error: ${response.status} - ${JSON.stringify(error)}`);
+		}
+
+		return response.json();
+	};
+
 	try {
+		Logger.debug(`Commands to register: ${JSON.stringify(bot.slashCommandsData.map(c => c.name))}`);
+		Logger.debug(`BOT_APP_ID: ${process.env.BOT_APP_ID}`);
+		Logger.debug(`COMMAND_GUILD_ID: ${process.env.COMMAND_GUILD_ID}`);
+
 		const globalCommands = (process.env.GLOBAL_COMMANDS ?? 'false').toLowerCase() === 'true';
 		if (!globalCommands) {
 			if (!process.env.COMMAND_GUILD_ID) {
@@ -165,23 +194,20 @@ export const loadCommands = async () => {
 				process.exit(1);
 			}
 
-			Logger.debug('Clearing old guild commands...');
-			await rest.put(Routes.applicationGuildCommands(process.env.BOT_APP_ID, process.env.COMMAND_GUILD_ID), { body: [] });
-			Logger.debug('Waiting 2 seconds before registering new commands...');
-			await delay(2000);
-			Logger.debug('Registering new guild commands...');
-			await rest.put(Routes.applicationGuildCommands(process.env.BOT_APP_ID, process.env.COMMAND_GUILD_ID), { body: bot.slashCommandsData });
+			const route = `/applications/${process.env.BOT_APP_ID}/guilds/${process.env.COMMAND_GUILD_ID}/commands`;
+
+			Logger.debug('Registering guild commands...');
+			const result = await discordApiRequest(route, 'PUT', bot.slashCommandsData);
+			Logger.debug(`Registration result: Registered ${Array.isArray(result) ? result.length : 0} commands`);
 			Logger.success(`Registered commands to guild ID ${process.env.COMMAND_GUILD_ID}`);
 		} else {
-			Logger.debug('Clearing old global commands...');
-			await rest.put(Routes.applicationCommands(process.env.BOT_APP_ID), { body: [] });
-			Logger.debug('Waiting 2 seconds before registering new commands...');
-			await delay(2000);
-			Logger.debug('Registering new global commands...');
-			await rest.put(Routes.applicationCommands(process.env.BOT_APP_ID), { body: bot.slashCommandsData });
+			const route = `/applications/${process.env.BOT_APP_ID}/commands`;
+
+			Logger.debug('Registering global commands...');
+			await discordApiRequest(route, 'PUT', bot.slashCommandsData);
 			Logger.success('Registered global commands');
 		}
-	} catch (error) {
+	} catch (error: any) {
 		Logger.error(`Failed to register slash commands: ${error}`);
 	}
 }
