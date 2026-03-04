@@ -234,6 +234,77 @@ export class ExampleCommand extends BaseSlashCommand {
 }
 ```
 
+## Creating Modals
+
+Create a new file in `src/modals/` with the `.modal.ts` suffix.
+
+```typescript
+// filepath: src/modals/feedback.modal.ts
+import { ModalSubmitInteraction, MessageFlags } from 'discord.js';
+import { BaseModal } from '../interfaces';
+import { RegisterModal } from '../decorators';
+
+@RegisterModal({
+    id: 'feedback',  // Must match the customId used when showing the modal
+})
+export class FeedbackModal extends BaseModal {
+    async run(interaction: ModalSubmitInteraction) {
+        const name = interaction.fields.getTextInputValue('nameInput');
+        const feedback = interaction.fields.getTextInputValue('feedbackInput');
+
+        await interaction.reply({
+            content: `Thanks ${name}! Your feedback: ${feedback}`,
+            flags: MessageFlags.Ephemeral,
+        });
+    }
+}
+```
+
+### Modal Options
+
+| Option | Type | Required | Description |
+|--------|------|----------|-------------|
+| `id` | string | Yes | Unique identifier for the modal (must match the `customId` set on `ModalBuilder`) |
+
+### Showing Modals from Commands
+
+```typescript
+import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { RegisterCommand } from '../decorators';
+import { BaseSlashCommand } from '../interfaces';
+
+@RegisterCommand({
+    name: 'feedback',
+    description: 'Open a feedback form',
+})
+export class FeedbackCommand extends BaseSlashCommand {
+    async run(interaction: ChatInputCommandInteraction) {
+        const modal = new ModalBuilder()
+            .setCustomId('feedback')
+            .setTitle('Feedback Form');
+
+        const nameInput = new TextInputBuilder()
+            .setCustomId('nameInput')
+            .setLabel('Your name')
+            .setStyle(TextInputStyle.Short)
+            .setRequired(true);
+
+        const feedbackInput = new TextInputBuilder()
+            .setCustomId('feedbackInput')
+            .setLabel('Your feedback')
+            .setStyle(TextInputStyle.Paragraph)
+            .setRequired(true);
+
+        modal.addComponents(
+            new ActionRowBuilder<TextInputBuilder>().addComponents(nameInput),
+            new ActionRowBuilder<TextInputBuilder>().addComponents(feedbackInput),
+        );
+
+        await interaction.showModal(modal);
+    }
+}
+```
+
 ## Project Structure
 
 ```
@@ -243,8 +314,9 @@ src/
 ├── buttons/            # Button handlers
 ├── commands/           # Slash commands
 ├── events/             # Event handlers
-├── decorators/         # Command, event, and button decorators
-├── handlers/           # Loaders for commands, events, and buttons
+├── modals/             # Modal submission handlers
+├── decorators/         # Command, event, button, and modal decorators
+├── handlers/           # Loaders for commands, events, buttons, and modals
 ├── interfaces/         # TypeScript interfaces and base classes
 └── utils/              # Utility functions
 ```

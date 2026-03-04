@@ -17,6 +17,6 @@ export class ButtonCommand extends BaseSlashCommand {
 		}
 
 		const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button.discordData);
-		interaction.reply({ content: 'Click a button', components: [row] })
+		await interaction.reply({ content: 'Click a button', components: [row] })
 	}
 }

@@ -77,5 +77,26 @@ export class InteractionCreateEvent extends BaseEvent {
 				}
 			}
 		}
+
+		if (interaction.isModalSubmit()) {
+			const modal = bot.modals.get(interaction.customId);
+			if (!modal) {
+				Logger.debug(`Modal not found: ${interaction.customId}`);
+				await interaction.reply({ content: '❌ Modal handler not found.', flags: MessageFlags.Ephemeral });
+				return;
+			}
+
+			try {
+				await modal.run(interaction);
+			} catch (error) {
+				Logger.error(`Error executing modal ${interaction.customId}:`, error);
+
+				if (interaction.replied || interaction.deferred) {
+					await interaction.followUp({ content: '❌ An error occurred while processing this modal.', flags: MessageFlags.Ephemeral }).catch(() => { });
+				} else {
+					await interaction.reply({ content: '❌ An error occurred while processing this modal.', flags: MessageFlags.Ephemeral }).catch(() => { });
+				}
+			}
+		}
 	}
 }
