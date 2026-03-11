@@ -1,5 +1,5 @@
-# IMPORTANT
-`This repository is still in progress, things will change. I can't promise that everything will work`
+> [!IMPORTANT]
+> Active development – early access. Expect breaking changes.
 
 # Discord Bot Template
 
